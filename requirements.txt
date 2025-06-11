@@ -1,0 +1,17 @@
+# Frameworks pour l'API et le serveur
+fastapi
+uvicorn[standard]
+
+# Communication HTTP et Scraping
+requests
+beautifulsoup4
+
+# Intégration de l'IA
+google-generativeai
+
+# Gestion des variables d'environnement
+python-dotenv
+
+# Outils de test
+pytest
+pytest-mock
