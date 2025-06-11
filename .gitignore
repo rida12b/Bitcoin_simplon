@@ -1,0 +1,45 @@
+# Fichiers de cache Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Environnements virtuels
+venv/
+env/
+.venv/
+ENV/
+
+# Fichiers de base de données
+*.sqlite3
+*.db
+/data/
+
+# Fichiers de configuration sensibles
+.env
+
+# Dépendances et builds
+dist/
+build/
+*.egg-info/
+
+# Fichiers de logs
+*.log
+logs/
+
+# Fichiers générés par les éditeurs
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+
+# Fichiers système
+.DS_Store
+
+# Fichiers de tests
+.pytest_cache/
+.coverage
+htmlcov/
+nosetests.xml
+coverage.xml
+repomix-output.xml
