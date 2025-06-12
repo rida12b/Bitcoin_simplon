@@ -55,6 +55,35 @@
 
 ---
 
+## 🟢 Journal d'Avancement - Bloc E1 (Compétence C5)
+
+**Date :** [à compléter]
+**Auteur :** Ridab
+
+### E1 - C5 : Mise à disposition des données via API REST (FastAPI)
+
+- **Création de l'API FastAPI** :
+  - Dossier `api/` créé, fichier `app.py` initialisé.
+  - Installation des dépendances : `fastapi`, `uvicorn`.
+  - Premier endpoint `/health` pour vérifier le bon fonctionnement de l'API.
+
+- **Endpoint `/latest-price`** :
+  - Permet de récupérer le dernier prix du Bitcoin stocké dans la base SQLite.
+  - Lecture directe dans la table `bitcoin_prices`.
+
+- **Endpoint `/price-history`** :
+  - Permet de récupérer l'historique des prix (par défaut sur 24h, paramètre `limit` possible).
+  - Retourne une liste structurée (timestamp, open, high, low, close, volume).
+
+- **Tests et validation** :
+  - Accès et test des endpoints via navigateur et Swagger UI (`/docs`).
+  - Vérification de la conformité au référentiel (C5 : API REST fonctionnelle, documentation automatique, accès sécurisé à venir).
+
+- **Préparation de la suite** :
+  - Prochaine étape : ajout des endpoints pour les actualités Bitcoin et intégration de l'IA (Gemini).
+
+---
+
 ## 2. Phase 1 : Collecte et Stockage des Données
 
 ### 2.1. Automatisation de l'Extraction des Prix (Compétence C1)

@@ -40,6 +40,43 @@
 
 ---
 
+## 🟢 Journal d'Avancement - Phase 0 : Préparation et Fondations (C14, C15)
+
+**Date :** [à compléter]
+**Auteur :** Ridab
+
+### Sauvegarde et versionnage du projet sur GitHub
+
+- Initialisation du dépôt Git local (`git init`).
+- Création et configuration du fichier `.gitignore` (exclusion des fichiers sensibles et inutiles).
+- Premier commit avec l'ensemble des scripts et documents du projet.
+- Création du dépôt distant sur GitHub.
+- Lien entre le dépôt local et GitHub (`git remote add origin ...`).
+- Push initial du projet (`git push -u origin main`).
+
+**Objectif :**
+- Sécuriser les travaux réalisés.
+- Assurer la traçabilité et la collaboration.
+- Se conformer aux bonnes pratiques professionnelles (RNCP).
+
+---
+
+## 🟢 Journal d'Avancement - Bloc E1 : API FastAPI (C5)
+
+**Date :** [à compléter]
+**Auteur :** Ridab
+
+- Création du dossier `api/` et du fichier `app.py` pour l'API FastAPI
+- Installation des dépendances (`fastapi`, `uvicorn`)
+- Développement du endpoint `/health` (test de vie de l'API)
+- Développement du endpoint `/latest-price` (dernier prix du Bitcoin)
+- Développement du endpoint `/price-history` (historique des prix)
+- Tests des endpoints via navigateur et Swagger UI
+- Validation de la conformité au référentiel (C5)
+- Préparation à l'ajout des endpoints pour les news et l'intégration de l'IA
+
+---
+
 ## 3. Journal des Modifications
 
 - **[Date] :**
