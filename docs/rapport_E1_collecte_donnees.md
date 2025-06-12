@@ -22,7 +22,7 @@
 
 ## 🟢 Journal d'Avancement - Bloc E1 (Compétences C1 à C4)
 
-**Date :** [à compléter]
+**Date :** 2024-07-29
 **Auteur :** Ridab
 
 ### E1 - C1, C2, C3 : Collecte et Préparation des Données
@@ -57,7 +57,7 @@
 
 ## 🟢 Journal d'Avancement - Bloc E1 (Compétence C5)
 
-**Date :** [à compléter]
+**Date :** 2024-07-29
 **Auteur :** Ridab
 
 ### E1 - C5 : Mise à disposition des données via API REST (FastAPI)
@@ -81,6 +81,61 @@
 
 - **Préparation de la suite** :
   - Prochaine étape : ajout des endpoints pour les actualités Bitcoin et intégration de l'IA (Gemini).
+
+---
+
+## 🟢 Journal d'Avancement - Bloc E1 (Compétence C5, multi-source)
+
+**Date :** 2024-07-29
+**Auteur :** Ridab
+
+### E1 - C5 : Intégration des actualités Bitcoin dans l'API FastAPI
+
+- **Création de la table `bitcoin_news` et du script de scraping** :
+  - Script `extraction_news.py` développé pour extraire les titres, liens et contenus des dernières actualités Bitcoin sur bitcoinmagazine.com.
+  - Utilisation de BeautifulSoup et gestion des headers pour contourner les protections anti-bot.
+  - Stockage automatisé dans la table `bitcoin_news` (unicité sur le titre, gestion des doublons).
+
+- **Ajout du endpoint `/latest-news` dans FastAPI** :
+  - Endpoint développé pour exposer les dernières actualités stockées dans la base SQLite.
+  - Paramètre `limit` pour ajuster le nombre de news retournées.
+  - Lecture directe dans la table, formatage JSON pour l'API.
+
+- **Tests et validation** :
+  - Accès et test du endpoint via navigateur et Swagger UI (`/docs`).
+  - Vérification de la conformité au référentiel (C5 : API REST multi-source, documentation automatique, robustesse).
+
+- **Préparation de la suite** :
+  - Possibilité d'ajouter d'autres endpoints (historique, recherche, etc.).
+  - Préparation à l'intégration de l'IA (Gemini) pour l'analyse des données.
+
+---
+
+## 🟠 Suivi des Erreurs et Gestion des Incidents - Bloc E1 (Compétence C21)
+
+**Date :** 2024-07-29
+**Auteur :** Ridab
+
+### Incident technique : "no such table: bitcoin_prices" lors de l'appel à l'API
+
+**Contexte**
+- Lors des appels aux endpoints de l'API FastAPI qui nécessitent un accès à la base de données (ex: `/price-history`), une erreur 500 "Internal Server Error" était retournée.
+- Après avoir ajouté une gestion des exceptions (`try...except`) dans le code de l'endpoint, le message d'erreur précis a pu être capturé : `sqlite3.OperationalError: no such table: bitcoin_prices`.
+
+**Diagnostic**
+- Le endpoint `/health` fonctionnait, confirmant que le serveur FastAPI lui-même était opérationnel.
+- L'erreur indiquait clairement que l'application API, au moment de son exécution, ne trouvait pas la table `bitcoin_prices` dans le fichier de base de données qu'elle ciblait.
+- **Hypothèse principale :** Les scripts d'extraction (`extraction_api.py`) et l'application API (`api/app.py`) n'utilisent pas le même contexte d'exécution. La fonction `init_db()` qui crée les tables a été exécutée par les scripts, mais jamais par le processus de l'API. L'API démarre et tente de lire une base de données qui, de son point de vue, est vide ou n'a pas les bonnes tables.
+
+**Résolution**
+- La solution consiste à s'assurer que la base de données et ses tables sont initialisées **au démarrage de l'application FastAPI elle-même**.
+- Il faut importer la fonction `init_db()` dans `api/app.py` et l'appeler grâce à un événement de démarrage (`@app.on_event("startup")`).
+- Cette approche garantit que, quel que soit le contexte d'exécution, l'API s'assure que la structure de la base de données est en place avant de commencer à accepter des requêtes.
+
+**Leçon apprise**
+- Une application (comme une API) et des scripts externes (comme des tâches d'extraction) ont des contextes d'exécution distincts. Il est crucial de ne pas supposer qu'une initialisation faite par l'un sera disponible pour l'autre.
+- Les applications doivent gérer leur propre initialisation (connexions, création de BDD, etc.) pour être autonomes et robustes.
+- La journalisation et la gestion précise des exceptions sont non-négociables pour un diagnostic rapide.
 
 ---
 

@@ -77,6 +77,18 @@
 
 ---
 
+## 🟢 Journal d'Avancement - Bloc E2 : Veille et Benchmark IA (C6, C7)
+
+**Date :** [à compléter]
+**Auteur :** Ridab
+
+- Planification de la réalisation d'un script d'automatisation pour la veille technologique et le benchmark des services d'IA (C6, C7).
+- Outil envisagé : lmarena (pour automatiser la collecte, la comparaison et la synthèse des informations sur les services IA).
+- La mise en œuvre de ce script sera réalisée ultérieurement, après l'intégration du service IA principal.
+- Priorisation de l'intégration et du paramétrage du service IA (C8) comme prochaine étape.
+
+---
+
 ## 3. Journal des Modifications
 
 - **[Date] :**
