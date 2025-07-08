@@ -1,0 +1,36 @@
+# Fichiers de cache Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Environnements virtuels
+venv/
+env/
+.venv/
+ENV/
+
+# Fichiers de base de données (on ne veut pas embarquer la BDD de dev dans l'image)
+*.sqlite3
+*.db
+/data/
+
+# Fichiers Git
+.git/
+.gitignore
+
+# Fichiers GitHub Actions
+.github/
+
+# Fichiers de configuration sensibles
+.env
+
+# Fichiers de test et de couverture
+.pytest_cache/
+.coverage
+htmlcov/
+tests/
+
+# Fichiers générés par les éditeurs
+.vscode/
+.idea/

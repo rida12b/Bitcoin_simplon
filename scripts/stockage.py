@@ -86,3 +86,9 @@ def insert_many(data_list, db_path=DB_PATH):
     
     conn.commit()
     conn.close()
+
+if __name__ == "__main__":
+    print("Initialisation de la base de données principale...")
+    # Appelle la fonction pour créer les tables si elles n'existent pas.
+    init_db()
+    print("✅ Base de données principale initialisée avec succès.")
