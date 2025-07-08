@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Bitcoin Analyzer - Tableau de Bord</title>
+    <style>
+        body { font-family: sans-serif; line-height: 1.6; margin: 0 auto; max-width: 1000px; padding: 2em; background-color: #f8f9fa; color: #343a40; }
+        h1, h2 { color: #007bff; border-bottom: 2px solid #dee2e6; padding-bottom: 0.5em; }
+        .container { display: grid; grid-template-columns: 1fr 1fr; gap: 2em; }
+        .card { background-color: #fff; border: 1px solid #ddd; padding: 1.5em; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        .article h3 { margin-top: 0; }
+        a { color: #0056b3; text-decoration: none; }
+        a:hover { text-decoration: underline; }
+        .error { color: #dc3545; background-color: #f8d7da; border: 1px solid #f5c6cb; padding: 1em; border-radius: 5px; }
+        ul { list-style-type: none; padding: 0; }
+        li { background-color: #e9ecef; margin-bottom: 5px; padding: 10px; border-radius: 5px; }
+    </style>
+</head>
+<body>
+
+    <h1>Tableau de Bord - Bitcoin Analyzer</h1>
+
+    {% if error_message %}
+        <p class="error">{{ error_message }}</p>
+        <p>Assurez-vous que le serveur de l'API FastAPI est bien démarré sur le port 8001.</p>
+    {% endif %}
+
+    <div class="container">
+        <div class="card">
+            <h2>Analyse de l'IA</h2>
+            <p>{{ price_analysis }}</p>
+        </div>
+
+        <div class="card">
+            <h2>Dernières Actualités</h2>
+            {% for article in news_list %}
+                <div class="article">
+                    <h3><a href="{{ article.link }}" target="_blank">{{ article.title }}</a></h3>
+                </div>
+            {% empty %}
+                <p>Aucune actualité à afficher.</p>
+            {% endfor %}
+        </div>
+    </div>
+
+    <div class="card" style="margin-top: 2em;">
+        <h2>Historique des Prix (24h)</h2>
+        <ul>
+        {% for price in price_history %}
+            <li>Timestamp: {{ price.timestamp }} - Prix de clôture: <strong>${{ price.close }}</strong></li>
+        {% empty %}
+            <li>Aucun historique de prix à afficher.</li>
+        {% endfor %}
+        </ul>
+    </div>
+
+</body>
+</html>

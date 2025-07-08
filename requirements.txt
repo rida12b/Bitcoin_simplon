@@ -16,3 +16,4 @@ python-dotenv
 pytest
 pytest-mock
 httpx
+Django

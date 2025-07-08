@@ -29,13 +29,13 @@
 ### Phase 2 : Bloc de Compétences 2 (L'IA)
 - [ ] **Tâche 2.1 (C6, C7, C8) :** Formaliser la veille et le benchmark de l'IA dans `/docs`.
 - [ ] **Tâche 2.2 (C9) :** Développer le module `llm_analyzer.py` et les endpoints IA dans l'API.
-- [ ] **Tâche 2.3 (C11, C12) :** Implémenter le monitoring (logging) et les tests `pytest` pour le module IA.
-- [ ] **Tâche 2.4 (C13) :** Mettre en place la CI/CD de base avec GitHub Actions.
+- [x] **Tâche 2.3 (C11, C12) :** Implémenter le monitoring (logging) et les tests `pytest` pour le module IA.
+- [x] **Tâche 2.4 (C13) :** Mettre en place la CI/CD de base avec GitHub Actions.
 
 ### Phase 3 : Bloc de Compétences 3 (L'Application)
 - [ ] **Tâche 3.1 (C14, C15, C16) :** Concevoir l'application Django (modèles, vues, URLs).
 - [ ] **Tâche 3.2 (C17) :** Développer le frontend (templates HTML, CSS) en consommant l'API.
-- [ ] **Tâche 3.3 (C18, C19) :** Ajouter les tests d'API à la CI/CD.
+- [x] **Tâche 3.3 (C18, C19) :** Ajouter les tests d'API à la CI/CD.
 - [ ] **Tâche 3.4 (C20, C21) :** Mettre en place la journalisation côté Django et documenter un incident simulé.
 
 ---
@@ -89,11 +89,84 @@
 
 ---
 
+## 🟢 Journal d'Avancement - Bloc E3 : Tests Automatisés et Qualité du Code (C12, C18)
+
+**Date :** [Décembre 2024]
+**Auteur :** Ridab
+
+### Mise en Place des Tests Automatisés
+
+#### Tests du Module d'IA (C12)
+- Création du fichier `tests/test_llm_analyzer.py` pour tester le module d'IA
+- Implementation de tests unitaires pour la fonction `analyze_text()` utilisant l'API Google Gemini
+- **Technique du Mocking :** Utilisation de `unittest.mock.patch` pour simuler les réponses de l'API Gemini
+- **Avantages :** Tests rapides, indépendants d'internet, sans coût d'API, testent uniquement la logique métier
+- **Validation :** Vérification de la création des prompts, gestion des réponses, et traitement des erreurs
+
+#### Tests de l'API FastAPI (C18)
+- Création du fichier `tests/test_api.py` pour tester les endpoints REST
+- Utilisation du `TestClient` de FastAPI pour simuler les requêtes HTTP
+- Tests des endpoints principaux : `/latest-news`, `/price-history`, `/health`
+- **Défi Initial :** Tests échouaient par manque d'accès à la base de données
+- **Solution :** Création d'une base de données de test dédiée
+
+#### Refactorisation pour la Testabilité (C21)
+- **Problème Identifié :** Module `stockage.py` difficile à tester (dépendances globales)
+- **Solution Appliquée :** Modification des fonctions pour accepter le chemin de la base de données en paramètre
+- **Principe :** Application de l'Inversion de Dépendance pour améliorer la flexibilité et la testabilité
+- **Résultat :** Code plus modulaire et tests isolés
+
+#### Infrastructure de Tests
+- Création du script `tests/setup_test_db.py` pour générer une base de données de test
+- Base de données de test dédiée : `tests/test_database.db`
+- Données prévisibles pour les tests : 1 actualité + 3 prix historiques
+- **Avantages :** Tests reproductibles, isolation des environnements, pas de pollution de la base principale
+
+---
+
+## 🟢 Journal d'Avancement - Bloc E4 : CI/CD et MLOps (C13, C19)
+
+**Date :** [Décembre 2024]
+**Auteur :** Ridab
+
+### Mise en Place de l'Intégration Continue avec GitHub Actions
+
+#### Configuration du Workflow CI/CD
+- Création du fichier `.github/workflows/ci.yml`
+- Configuration pour se déclencher à chaque `push` sur la branche `main`
+- **Étapes du Workflow :**
+  1. `actions/checkout` : Récupération du code source
+  2. `actions/setup-python` : Installation de Python
+  3. Installation des dépendances depuis `requirements.txt`
+  4. Préparation de l'environnement de test (`python tests/setup_test_db.py`)
+  5. Exécution de la suite de tests (`pytest`)
+
+#### Gestion d'Incident CI/CD
+- **Problème Rencontré :** Premier échec du workflow avec `ModuleNotFoundError: No module named 'httpx'`
+- **Diagnostic :** Dépendance `httpx` installée en local mais absente du `requirements.txt`
+- **Cause Racine :** Oubli d'ajout de la dépendance dans le fichier de configuration
+- **Résolution :** Ajout de `httpx` dans `requirements.txt` et nouveau commit
+- **Validation :** Workflow passé au vert, environnement reproductible confirmé
+- **Leçon Apprise :** Importance de la CI pour garantir la reproductibilité des environnements
+
+#### Bénéfices de la CI/CD
+- **Automatisation :** Exécution automatique des tests à chaque modification
+- **Fiabilité :** Détection précoce des régressions et des dépendances manquantes
+- **Qualité :** Garantie que le code fonctionne dans un environnement propre
+- **Collaboration :** Validation automatique des contributions futures
+
+---
+
 ## 3. Journal des Modifications
 
 - **[Date] :**
     - **Action :** Initialisation du projet. Création de l'arborescence et des fichiers de suivi `PLAN_PROJET_RNCP.md` et `suivi_projet.md`.
     - **Décision :** Choix d'une architecture découplée FastAPI/Django pour bien séparer les responsabilités et couvrir les blocs de compétences.
+
+- **[Décembre 2024] :**
+    - **Action :** Mise en place complète des tests automatisés (C12, C18) et de l'intégration continue (C13, C19).
+    - **Décision :** Adoption du mocking pour les tests d'IA et création d'une base de données de test séparée.
+    - **Refactorisation :** Amélioration de la testabilité du module `stockage.py` par injection de dépendances.
 
 ---
 
@@ -101,7 +174,7 @@
 
 | Date | Erreur Rencontrée | Cause Analysée | Solution Apportée | Compétence Testée (ex: C21) |
 |------|-------------------|----------------|-------------------|-----------------------------|
-|      |                   |                |                   |                             |
+| Décembre 2024 | `ModuleNotFoundError: No module named 'httpx'` lors de l'exécution du workflow GitHub Actions | Dépendance `httpx` installée en local mais absente du fichier `requirements.txt` | Ajout de `httpx` dans `requirements.txt` et nouveau commit. Workflow passé au vert. | C13, C19 - Démonstration de l'utilité de la CI pour détecter les problèmes de reproductibilité |
 
 ---
 
