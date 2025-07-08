@@ -11,7 +11,7 @@ app = FastAPI()
 DB_PATH = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "data/bitcoin.db")
 @app.get("/latest-price")
 def get_latest_price():
-    conn = sqlite3.connect("bitcoin_data.db")
+    conn = sqlite3.connect(DB_PATH)
     cursor = conn.cursor()
     cursor.execute("SELECT timestamp, open, high, low, close, volume FROM bitcoin_prices ORDER BY timestamp DESC LIMIT 1")
     row = cursor.fetchone()
@@ -30,7 +30,7 @@ def get_latest_price():
     
 @app.get("/price-history")
 def get_price_history(limit: int = 24):
-    conn = sqlite3.connect("bitcoin_data.db")
+    conn = sqlite3.connect(DB_PATH)
     cursor = conn.cursor()
     cursor.execute(
         "SELECT timestamp, open, high, low, close, volume FROM bitcoin_prices ORDER BY timestamp DESC LIMIT ?",
