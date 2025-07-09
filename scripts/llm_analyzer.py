@@ -14,4 +14,4 @@ def analyze_text(prompt):
 
 if __name__ == "__main__":
     prompt = "Analyse le prix du Bitcoin sur les dernières 24h."
-    print(analyze_text(prompt))
+    print(analyze_text(prompt)) 
