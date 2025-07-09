@@ -1,6 +1,7 @@
 from django.shortcuts import render
 import requests
-import logging  # ## AJOUT ##
+import logging
+from datetime import datetime
 
 # ## AJOUT ## : Initialisation du logger pour ce module.
 # C'est une bonne pratique de nommer le logger avec __name__.
@@ -26,28 +27,38 @@ def news_list(request):
 
     try:
         # --- 1. Récupérer les nouvelles ---
-        news_url = f"{API_BASE_URL}/latest-news?limit=5"
-        logger.info(f"Début de l'appel API vers : {news_url}") # ## AJOUT ##
-        news_response = requests.get(news_url, timeout=5) # Ajout d'un timeout
+        news_url = f"{API_BASE_URL}/latest-news?limit=3"  # Limité à 3 pour un affichage plus propre
+        logger.info(f"Début de l'appel API vers : {news_url}")
+        news_response = requests.get(news_url, timeout=5)
         news_response.raise_for_status()
         context['news_list'] = news_response.json()
-        logger.info(f"Succès : {len(context['news_list'])} actualités récupérées.") # ## AJOUT ##
+        logger.info(f"Succès : {len(context['news_list'])} actualités récupérées.")
 
         # --- 2. Récupérer l'historique des prix ---
-        history_url = f"{API_BASE_URL}/price-history?limit=24"
-        logger.info(f"Début de l'appel API vers : {history_url}") # ## AJOUT ##
+        history_url = f"{API_BASE_URL}/price-history?limit=10"  # Limité à 10 pour un affichage plus concis
+        logger.info(f"Début de l'appel API vers : {history_url}")
         history_response = requests.get(history_url, timeout=5)
         history_response.raise_for_status()
-        context['price_history'] = history_response.json()
-        logger.info(f"Succès : {len(context['price_history'])} points d'historique récupérés.") # ## AJOUT ##
+        
+        price_history_raw = history_response.json()
+        
+        # ## MODIFICATION : Conversion du timestamp en date lisible ##
+        for price_data in price_history_raw:
+            # On convertit le timestamp Unix en objet datetime
+            dt_object = datetime.fromtimestamp(price_data['timestamp'])
+            # On ajoute une nouvelle clé 'formatted_date' avec la date formatée
+            price_data['formatted_date'] = dt_object.strftime('%d %b %Y, %H:%M')
+
+        context['price_history'] = price_history_raw
+        logger.info(f"Succès : {len(context['price_history'])} points d'historique récupérés et formatés.")
 
         # --- 3. Récupérer l'analyse de l'IA ---
         analysis_url = f"{API_BASE_URL}/price-analysis"
-        logger.info(f"Début de l'appel API vers : {analysis_url}") # ## AJOUT ##
-        analysis_response = requests.get(analysis_url, timeout=15) # Timeout plus long pour l'IA
+        logger.info(f"Début de l'appel API vers : {analysis_url}")
+        analysis_response = requests.get(analysis_url, timeout=15)
         analysis_response.raise_for_status()
         context['price_analysis'] = analysis_response.json().get('analysis', "Format d'analyse inattendu.")
-        logger.info("Succès : Analyse de l'IA récupérée.") # ## AJOUT ##
+        logger.info("Succès : Analyse de l'IA récupérée.")
 
     except requests.exceptions.RequestException as e:
         # Si un seul des appels échoue, on affiche un message d'erreur global

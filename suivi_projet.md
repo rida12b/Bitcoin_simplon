@@ -38,6 +38,9 @@
 - [x] **Tâche 3.3 (C18, C19) :** Ajouter les tests d'API à la CI/CD.
 - [x] **Tâche 3.4 (C20, C21) :** Mettre en place la journalisation côté Django et documenter un incident simulé.
 
+### Phase 4 : Améliorations et Optimisations
+- [x] **Tâche 4.1 (C17) :** Améliorer l'interface utilisateur avec conversion des timestamps et design moderne.
+
 ---
 
 ## 🟢 Journal d'Avancement - Phase 0 : Préparation et Fondations (C14, C15)
@@ -361,6 +364,99 @@
 
 ---
 
+## 🟢 Journal d'Avancement - Bloc E7 : Amélioration Interface Utilisateur (C17)
+
+**Date :** [Décembre 2024 - Amélioration UX/UI]
+**Auteur :** Ridab
+
+### Contexte et Problématique Identifiée
+
+#### Analyse du Besoin
+- **Problème Constaté :** Les timestamps Unix dans l'interface (ex: `1703845200`) étaient illisibles pour l'utilisateur final
+- **Impact Utilisateur :** Difficulté à comprendre la chronologie des données de prix Bitcoin
+- **Problème Secondaire :** Interface basique peu engageante et non-professionnelle
+
+#### Diagnostic Technique
+- **Données Source :** API FastAPI retourne les timestamps Unix (format numérique)
+- **Cause Racine :** Aucune conversion côté frontend pour lisibilité humaine
+- **Architecture :** Logique de présentation à implémenter dans la vue Django
+
+### Méthodologie de Résolution Appliquée
+
+#### Phase 1 : Analyse et Planification
+- **Principe Appliqué :** Séparation responsabilités (conversion dans la vue, pas dans le template)
+- **Choix Technique :** Utilisation du module `datetime` Python pour conversion
+- **Stratégie :** Enrichissement des données avant transmission au template
+
+#### Phase 2 : Modifications Backend (Vue Django)
+- **Fichier Modifié :** `viewer/views.py`
+- **Import Ajouté :** `from datetime import datetime`
+- **Logique Implémentée :**
+  ```python
+  # Conversion timestamp Unix → datetime → format lisible
+  dt_object = datetime.fromtimestamp(price_data['timestamp'])
+  price_data['formatted_date'] = dt_object.strftime('%d %b %Y, %H:%M')
+  ```
+- **Résultat :** Nouvelle clé `formatted_date` disponible dans le template
+
+#### Phase 3 : Refonte Interface Utilisateur
+- **Fichier Modifié :** `viewer/templates/viewer/news_list.html`
+- **Améliorations Apportées :**
+  - **Design Moderne :** CSS entièrement revu avec système de cartes (cards)
+  - **Icônes Font Awesome :** Intégration CDN pour icônes Bitcoin, cerveau, journal, graphique
+  - **Typography :** Police Google Fonts (Roboto) pour lisibilité professionnelle
+  - **Responsive :** Grid CSS adaptable (`grid-template-columns: repeat(auto-fit, minmax(300px, 1fr))`)
+  - **Micro-interactions :** Animations hover sur les cartes (`transform: translateY(-5px)`)
+
+### Résultats Techniques Obtenus
+
+#### Conversion Temporelle
+- **Avant :** `Timestamp: 1703845200 - Prix de clôture: $42,350`
+- **Après :** `15 Dec 2023, 14:20 - $42,350`
+- **Impact :** Lisibilité immédiate pour l'utilisateur final
+
+#### Amélioration Visuelle
+- **Design Pattern :** Passage d'une interface tabulaire à un système de cartes modernes
+- **Structure Adaptable :** Grille responsive qui s'adapte à la taille d'écran
+- **Hiérarchie Visuelle :** Utilisation cohérente des couleurs et espacements
+- **Accessibilité :** Contraste amélioré et navigation intuitive
+
+#### Optimisations de Performance
+- **Affichage Limité :** Réduction de 24h à 10 dernières heures pour l'historique des prix
+- **Scroll Optimisé :** `max-height: 300px; overflow-y: auto` pour éviter pages trop longues
+- **Actualités :** Limitation à 3 articles pour focus sur l'essentiel
+
+### Impact sur l'Architecture et Bonnes Pratiques
+
+#### Séparation des Responsabilités
+- **Vue Django :** Responsable de la logique de présentation (conversion timestamps)
+- **Template :** Responsable uniquement de l'affichage (pas de logique métier)
+- **Principe MVC :** Respect du pattern Model-View-Controller de Django
+
+#### Extensibilité Future
+- **Formatage Configurable :** Possibilité d'ajouter différents formats de date
+- **Internationalisation :** Base posée pour support multi-langues
+- **Responsive Design :** Interface adaptable pour tous supports (mobile, tablet, desktop)
+
+### Validation Compétence C17 - Développement Frontend
+
+#### Démonstrabilité Technique
+- **Interface Fonctionnelle :** Application accessible via navigateur avec données temps réel
+- **Qualité Professionnelle :** Design moderne avec standards UI/UX
+- **Intégration Complète :** Communication efficace avec backend API FastAPI
+
+#### Excellence Démontrée
+- **Réflexion UX :** Identification proactive des points de friction utilisateur
+- **Solutions Élégantes :** Conversion des données à la source plutôt que côté client
+- **Standard Professionnel :** Interface comparable aux applications métier modernes
+
+#### Évolutivité
+- **Fondations Solides :** Architecture CSS modulaire et extensible
+- **Maintenance :** Code clean et commenté pour évolutions futures
+- **Bonnes Pratiques :** Respect des conventions Django et standards web
+
+---
+
 ## 3. Journal des Modifications
 
 - **[Date] :**
@@ -389,6 +485,16 @@
     - **Décision :** Adoption d'une méthodologie professionnelle de veille GitHub active et benchmark LMSys objectif.
     - **Documents Créés :** `docs/veille_technologique.md` et `docs/benchmark_ia.md` avec analyses complètes.
     - **Validation :** 21/21 compétences RNCP validées - Projet d'excellence technique et méthodologique.
+
+- **[Décembre 2024 - Amélioration Interface Utilisateur] :**
+    - **Action :** Refonte complète de l'interface utilisateur avec conversion des timestamps et design moderne.
+    - **Décision :** Application du principe de séparation des responsabilités (logique dans la vue, affichage dans le template).
+    - **Modifications Techniques :** 
+      - Ajout de la conversion timestamp Unix → format lisible dans `viewer/views.py`
+      - Refonte complète du template avec système de cartes modernes et icônes Font Awesome
+      - Intégration de Google Fonts et animations CSS pour une UX professionnelle
+    - **Impact :** Interface utilisateur transformée de basique à professionnelle, amélioration significative de l'expérience utilisateur.
+    - **Validation :** Compétence C17 renforcée avec démonstration d'excellence en développement frontend.
 
 ---
 

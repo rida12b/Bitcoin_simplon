@@ -2,56 +2,151 @@
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Bitcoin Analyzer - Tableau de Bord</title>
+    <!-- ## AJOUT : Lien vers Font Awesome pour les icônes ## -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
-        body { font-family: sans-serif; line-height: 1.6; margin: 0 auto; max-width: 1000px; padding: 2em; background-color: #f8f9fa; color: #343a40; }
-        h1, h2 { color: #007bff; border-bottom: 2px solid #dee2e6; padding-bottom: 0.5em; }
-        .container { display: grid; grid-template-columns: 1fr 1fr; gap: 2em; }
-        .card { background-color: #fff; border: 1px solid #ddd; padding: 1.5em; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
-        .article h3 { margin-top: 0; }
-        a { color: #0056b3; text-decoration: none; }
-        a:hover { text-decoration: underline; }
-        .error { color: #dc3545; background-color: #f8d7da; border: 1px solid #f5c6cb; padding: 1em; border-radius: 5px; }
-        ul { list-style-type: none; padding: 0; }
-        li { background-color: #e9ecef; margin-bottom: 5px; padding: 10px; border-radius: 5px; }
+        /* ## CSS ENTIÈREMENT REVU POUR UN DESIGN MODERNE ## */
+        @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap');
+
+        body {
+            font-family: 'Roboto', sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            background-color: #f4f7f9;
+            color: #333;
+        }
+        .main-container {
+            max-width: 1200px;
+            margin: 2em auto;
+            padding: 1em;
+        }
+        h1 {
+            color: #2c3e50;
+            text-align: center;
+            margin-bottom: 1em;
+            font-size: 2.5em;
+        }
+        .grid-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5em;
+        }
+        .card {
+            background-color: #fff;
+            border: 1px solid #e0e0e0;
+            padding: 1.5em;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.05);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 16px rgba(0,0,0,0.1);
+        }
+        .card h2 {
+            color: #007bff;
+            border-bottom: 2px solid #e0e0e0;
+            padding-bottom: 0.5em;
+            margin-top: 0;
+            font-size: 1.4em;
+            display: flex;
+            align-items: center;
+        }
+        .card h2 i {
+            margin-right: 0.5em;
+        }
+        .article h3 {
+            margin: 0.5em 0 0.2em 0;
+            font-size: 1.1em;
+        }
+        a {
+            color: #0056b3;
+            text-decoration: none;
+        }
+        a:hover {
+            text-decoration: underline;
+        }
+        .error {
+            color: #dc3545;
+            background-color: #f8d7da;
+            border: 1px solid #f5c6cb;
+            padding: 1em;
+            border-radius: 8px;
+            text-align: center;
+            margin-bottom: 1.5em;
+        }
+        .price-history-list {
+            list-style-type: none;
+            padding: 0;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+        .price-history-list li {
+            background-color: #f8f9fa;
+            margin-bottom: 8px;
+            padding: 12px;
+            border-radius: 5px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-left: 4px solid #007bff;
+        }
+        .price-history-list .price {
+            font-weight: bold;
+            color: #28a745;
+        }
+        .full-width-card {
+             grid-column: 1 / -1; /* Fait en sorte que cette carte prenne toute la largeur */
+        }
     </style>
 </head>
 <body>
 
-    <h1>Tableau de Bord - Bitcoin Analyzer</h1>
+    <div class="main-container">
+        <h1><i class="fab fa-bitcoin"></i> Tableau de Bord - Bitcoin Analyzer</h1>
 
-    {% if error_message %}
-        <p class="error">{{ error_message }}</p>
-        <p>Assurez-vous que le serveur de l'API FastAPI est bien démarré sur le port 8001.</p>
-    {% endif %}
+        {% if error_message %}
+            <p class="error">
+                <strong><i class="fas fa-exclamation-triangle"></i> Oups !</strong><br>
+                {{ error_message }}<br>
+                <small>Assurez-vous que le serveur de l'API FastAPI est bien démarré sur le port 8001.</small>
+            </p>
+        {% endif %}
 
-    <div class="container">
-        <div class="card">
-            <h2>Analyse de l'IA</h2>
-            <p>{{ price_analysis }}</p>
+        <div class="grid-container">
+            <div class="card">
+                <h2><i class="fas fa-brain"></i> Analyse de l'IA</h2>
+                <p>{{ price_analysis }}</p>
+            </div>
+
+            <div class="card">
+                <h2><i class="fas fa-newspaper"></i> Dernières Actualités</h2>
+                {% for article in news_list %}
+                    <div class="article">
+                        <h3><a href="{{ article.link }}" target="_blank" title="Lire l'article complet">{{ article.title }}</a></h3>
+                    </div>
+                {% empty %}
+                    <p>Aucune actualité à afficher.</p>
+                {% endfor %}
+            </div>
+
+            <div class="card full-width-card">
+                <h2><i class="fas fa-chart-line"></i> Historique des Prix (10 dernières heures)</h2>
+                <ul class="price-history-list">
+                {% for price in price_history %}
+                    <li>
+                        <!-- ## MODIFICATION : On utilise la date formatée ## -->
+                        <span>{{ price.formatted_date }}</span>
+                        <span class="price">${{ price.close }}</span>
+                    </li>
+                {% empty %}
+                    <li>Aucun historique de prix à afficher.</li>
+                {% endfor %}
+                </ul>
+            </div>
         </div>
-
-        <div class="card">
-            <h2>Dernières Actualités</h2>
-            {% for article in news_list %}
-                <div class="article">
-                    <h3><a href="{{ article.link }}" target="_blank">{{ article.title }}</a></h3>
-                </div>
-            {% empty %}
-                <p>Aucune actualité à afficher.</p>
-            {% endfor %}
-        </div>
-    </div>
-
-    <div class="card" style="margin-top: 2em;">
-        <h2>Historique des Prix (24h)</h2>
-        <ul>
-        {% for price in price_history %}
-            <li>Timestamp: {{ price.timestamp }} - Prix de clôture: <strong>${{ price.close }}</strong></li>
-        {% empty %}
-            <li>Aucun historique de prix à afficher.</li>
-        {% endfor %}
-        </ul>
     </div>
 
 </body>
