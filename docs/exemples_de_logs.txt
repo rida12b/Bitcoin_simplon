@@ -1,0 +1,42 @@
+(venv) PS C:\Users\Ridab\Desktop\Projet\Simplon_essai_final_projet> python manage.py runserver
+Watching for file changes with StatReloader
+Watching for file changes with StatReloader
+Performing system checks...
+
+System check identified no issues (0 silenced).
+July 09, 2025 - 10:23:32
+Django version 5.2.4, using settings 'dashboard.settings'
+Starting development server at http://127.0.0.1:8000/
+Quit the server with CTRL-BREAK.
+
+WARNING: This is a development server. Do not use it in a production setting. Use a production WSGI or ASGI server instead.
+For more information on production servers see: https://docs.djangoproject.com/en/5.2/howto/deployment/
+Requête reçue pour le tableau de bord depuis l'IP : 127.0.0.1
+Début de l'appel API vers : http://127.0.0.1:8001/latest-news?limit=5
+Succès : 3 actualités récupérées.
+Début de l'appel API vers : http://127.0.0.1:8001/price-history?limit=24
+Succès : 24 points d'historique récupérés.
+Début de l'appel API vers : http://127.0.0.1:8001/price-analysis
+Succès : Analyse de l'IA récupérée.
+[09/Jul/2025 10:23:46] "GET / HTTP/1.1" 200 4697
+
+
+
+
+(venv) PS C:\Users\Ridab\Desktop\Projet\Simplon_essai_final_projet> uvicorn api.app:app --reload --port 8001
+INFO:     Will watch for changes in these directories: ['C:\\Users\\Ridab\\Desktop\\Projet\\Simplon_essai_final_projet']
+INFO:     Uvicorn running on http://127.0.0.1:8001 (Press CTRL+C to quit)
+INFO:     Started reloader process [15992] using WatchFiles
+INFO:     Started server process [11568]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+2025-07-09 10:23:39,049 - INFO - API - Requête reçue pour les dernières nouvelles (limite=5).
+2025-07-09 10:23:39,054 - INFO - API - 3 actualités trouvées.
+INFO:     127.0.0.1:61444 - "GET /latest-news?limit=5 HTTP/1.1" 200 OK
+2025-07-09 10:23:39,071 - INFO - API - Requête reçue pour l'historique des prix (limite=24).
+2025-07-09 10:23:39,074 - INFO - API - 24 enregistrements d'historique trouvés.
+INFO:     127.0.0.1:61445 - "GET /price-history?limit=24 HTTP/1.1" 200 OK
+2025-07-09 10:23:39,098 - INFO - API - Requête reçue pour l'analyse de prix (limite=24).
+2025-07-09 10:23:39,103 - INFO - API - Appel au service d'analyse IA (Gemini)...
+2025-07-09 10:23:46,068 - INFO - API - Analyse IA reçue avec succès.
+INFO:     127.0.0.1:61446 - "GET /price-analysis HTTP/1.1" 200 OK
