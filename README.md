@@ -21,18 +21,18 @@ graph TD;
 
     subgraph "Frontend (Interface Utilisateur)"
         direction LR
-        U -- "1. Requête HTTP (Port 8000)" --> D[Serveur Django];
-        D -- "5. Renvoi de la page HTML" --> U;
+        U -- "1- Requête HTTP (Port 8000)" --> D[Serveur Django];
+        D -- "5- Renvoi de la page HTML" --> U;
     end
 
     subgraph "Backend (Service d'Analyse)"
         direction LR
-        D -- "2. Appel API REST (Port 8001)" --> F[API FastAPI];
+        D -- "2- Appel API REST (Port 8001)" --> F[API FastAPI];
         F -- "3a. Requête SQL" --> DB[(🗃️ Base de Données SQLite)];
         DB -- " " --> F;
         F -- "3b. Appel API Externe" --> G[API Google Gemini];
         G -- " " --> F;
-        F -- "4. Réponse JSON" --> D;
+        F -- "4- Réponse JSON" --> D;
     end
 
     style D fill:#A9D0F5,stroke:#333,stroke-width:2px
