@@ -496,6 +496,21 @@
     - **Impact :** Interface utilisateur transformée de basique à professionnelle, amélioration significative de l'expérience utilisateur.
     - **Validation :** Compétence C17 renforcée avec démonstration d'excellence en développement frontend.
 
+- **[Décembre 2024 - Documentation Projet Complète] :**
+    - **Action :** Création du README.md complet avec documentation professionnelle du projet Bitcoin Analyzer.
+    - **Décision :** Adoption d'un format README standard avec badges, architecture Mermaid, et guide d'installation détaillé.
+    - **Contenu Ajouté :**
+      - Badges de version Python, licence MIT et CI/CD
+      - Description complète du projet et contexte RNCP
+      - Diagramme d'architecture Mermaid illustrant les flux de données
+      - Fonctionnalités clés avec emojis pour lisibilité
+      - Pile technologique en tableau structuré
+      - Guide de démarrage rapide avec prérequis et instructions
+      - Documentation des tests automatisés
+      - Structure complète du projet avec descriptions
+    - **Impact :** Documentation professionnelle facilitant l'onboarding des nouveaux développeurs et démonstration de qualité pour le jury RNCP.
+    - **Validation :** Amélioration de la maintenabilité et de la professionnalisation du projet.
+
 ---
 
 ## 4. Suivi des Erreurs
