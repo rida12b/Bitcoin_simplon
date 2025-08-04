@@ -4,6 +4,9 @@ import os
 import sys
 from fastapi import FastAPI, HTTPException
 
+DB_PATH = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "data", "bitcoin.db")
+print(f"CHEMIN DB (API): {os.path.abspath(DB_PATH)}") # <--- 
+
 # --- Configuration du Path (acceptable pour ce projet, mais à revoir pour un projet plus grand) ---
 # Ajoute le dossier parent au path pour trouver le module 'scripts'
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
