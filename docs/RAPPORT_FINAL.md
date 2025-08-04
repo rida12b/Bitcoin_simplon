@@ -220,8 +220,8 @@ def get_bitcoin_data():
         return None
 Use code with caution.
 Python
-Source 2 : Scraping Web (Bitcoin Magazine) - Compétence C1
-Pour les actualités, qui n'étaient pas disponibles via une API simple, j'ai développé le script scripts/extraction_news.py. Il utilise les bibliothèques requests pour télécharger le contenu HTML de la page d'actualités et BeautifulSoup pour le parser. Un User-Agent spécifique est défini dans les en-têtes pour simuler un navigateur légitime et éviter les blocages de sécurité courants. Ce processus transforme efficacement des données non structurées (HTML) en données structurées (une liste d'articles avec titre et lien).
+Source 2 : Scraping Web Dynamique (news.bitcoin.com) - Compétence C1
+Pour les actualités, la source initiale s'est avérée trop protégée contre le scraping classique. J'ai donc développé une nouvelle version du script `scripts/extraction_news.py` qui cible `news.bitcoin.com`. Ce site charge son contenu dynamiquement via JavaScript, rendant une simple requête HTTP inefficace. La solution a donc été d'utiliser `undetected-chromedriver` pour piloter un véritable navigateur Chrome. Le script attend que le JavaScript s'exécute, puis il parse le HTML final avec `BeautifulSoup`. Cette approche robuste permet d'extraire les titres et les liens des articles, transformant des données non structurées et dynamiques en un format structuré et exploitable. La gestion de cet incident est détaillée dans la section C21.
 Agrégation et Nettoyage - Compétence C3
 Une fois les données brutes extraites, elles sont immédiatement nettoyées et formatées pour garantir leur qualité et leur homogénéité avant le stockage. Par exemple, dans extraction_api.py, les données JSON de l'API sont transformées en une liste de dictionnaires Python avec des clés normalisées (timestamp, open, high, low, close, volume), préparant ainsi le jeu de données final.
 3.2 Extraction via Requêtes SQL (C2)
@@ -587,6 +587,13 @@ Symptôme : Les logs du runner GitHub affichaient une erreur ModuleNotFoundError
 Diagnostic : L'erreur indiquait que l'environnement de la CI ne disposait pas de toutes les dépendances nécessaires. Le paquet httpx (une dépendance de fastapi.testclient) avait été installé manuellement en local mais n'avait pas été ajouté au fichier requirements.txt.
 Résolution : La dépendance manquante a été ajoutée au fichier requirements.txt. Après un nouveau commit, le workflow s'est exécuté avec succès.
 Leçon Apprise : Cet incident a été une démonstration pratique de la valeur de l'intégration continue. Elle force la discipline dans la gestion des dépendances et garantit la reproductibilité des environnements, évitant ainsi le classique "ça marche sur ma machine".
+
+Incident 3 : Échec du Scraping et Changement de Cible
+Contexte : Le script de scraping initial ciblait un site d'actualités qui a mis en place des mesures de sécurité avancées (type Cloudflare) incluant une vérification JavaScript, provoquant des échecs systématiques (erreurs HTTP 403).
+Symptôme : Le script de scraping ne retournait aucun article et les logs montraient un code de statut HTTP 403, indiquant un accès refusé.
+Diagnostic : L'analyse de la page cible a révélé qu'elle nécessitait l'exécution de JavaScript pour afficher son contenu, une mesure anti-bot courante. S'acharner sur cette cible aurait nécessité des techniques de contournement complexes et peu fiables.
+Résolution : Une décision stratégique a été prise : changer la source de données pour `news.bitcoin.com`, un site qui, bien que dynamique, est accessible via un scraping automatisé avec `undetected-chromedriver`. Le script a été entièrement réécrit pour utiliser ce nouvel outil, piloter un navigateur, attendre le chargement du contenu, et utiliser de nouveaux sélecteurs CSS (`div.sc-dDSDPK`) pour extraire les informations.
+Leçon Apprise : Cet incident a souligné l'importance de la flexibilité dans la collecte de données. Plutôt que de s'obstiner sur une source problématique, une bonne pratique d'ingénierie consiste à pivoter vers une source de données alternative plus fiable pour garantir la continuité du service.
 
 
 ## 6. Conclusion
