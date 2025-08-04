@@ -1,0 +1,23 @@
+<prompt_cursor>
+<objectif>Documenter et appliquer la refonte stratégique du script de scraping `scripts/extraction_news.py` pour résoudre les échecs de collecte de données et assurer sa robustesse.</objectif>
+<fichiers_en_contexte>
+    scripts/extraction_news.py
+    logs.txt
+    docs/RAPPORT_FINAL.md
+</fichiers_en_contexte>
+<tache>
+    - **Changement de Cible Stratégique :**
+        - Modifier la constante `TARGET_URL` pour pointer vers "https://news.bitcoin.com/" au lieu de l'ancienne cible qui bloquait les requêtes (erreur 403 et vérification JavaScript).
+        - Justifier cette décision comme une résolution d'incident (Compétence C21), car s'acharner sur une cible trop protégée est une mauvaise pratique d'ingénierie.
+
+    - **Adaptation de la Méthode d'Extraction :**
+        - Conserver l'utilisation de `undetected-chromedriver` car la nouvelle cible charge également son contenu de manière dynamique via JavaScript.
+        - Remplacer les anciens sélecteurs CSS qui sont devenus incorrects. Le nouveau sélecteur principal pour trouver chaque conteneur d'article est `div.sc-dDSDPK`.
+        - À l'intérieur de chaque conteneur d'article trouvé, utiliser le sélecteur `h6` pour cibler et extraire le texte du titre.
+        - S'assurer que le lien de l'article est correctement extrait de la balise `<a>` parente et reconstruit si nécessaire pour être une URL absolue.
+
+    - **Fiabilisation et Nettoyage :**
+        - Maintenir une pause explicite `time.sleep(5)` qui s'est avérée suffisante pour permettre au JavaScript de la nouvelle cible de charger entièrement la page.
+        - Simplifier le code en supprimant toute logique de contournement complexe qui était devenue obsolète après le changement de cible.
+</tache>
+</prompt_cursor>
