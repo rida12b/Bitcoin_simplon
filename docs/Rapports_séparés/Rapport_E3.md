@@ -1,8 +1,11 @@
 # Rapport d'Épreuve E3 : Intégration et Déploiement du Service d'IA (C9-C13)
 
 Projet : **Bitcoin Analyzer**
+
 Candidat : Rida Boualam
+
 Date : Juillet 2025
+
 Certification Visée : RNCP37827 - Développeur en Intelligence Artificielle
 
 ## Table des Matières

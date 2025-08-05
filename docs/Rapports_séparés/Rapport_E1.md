@@ -1,8 +1,12 @@
 # Rapport d'Épreuve E1 : Construction du Pipeline de Données (C1-C5)
 
 **Candidat** : Rida Boualam
+
 **Projet** : Bitcoin Analyzer
+
 **Date** : Juillet 2025
+
+**Certification Visée** : RNCP37827 - Développeur en Intelligence Artificielle
 
 ## Introduction
 

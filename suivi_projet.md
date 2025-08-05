@@ -1,4 +1,4 @@
-# Suivi de Projet - Bitcoin Analyzer (RNCP)
+# Suivi de Projet - Bitcoin Analyzer 
 
 ## 1. Description Générale
 
