@@ -1,66 +1,57 @@
-# Fichier : scripts/extraction_news.py
-# Version finale utilisant les sélecteurs CSS exacts, trouvés grâce au fichier debug_page.html.
-
 import os
 import sys
 import time
 import undetected_chromedriver as uc
 from bs4 import BeautifulSoup
-import sqlite3
+import psycopg2
+from psycopg2 import extras
+from dotenv import load_dotenv
 
-
-DB_PATH = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "data", "bitcoin.db")
-print(f"CHEMIN DB (SCRIPT): {os.path.abspath(DB_PATH)}") # <---
-
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
-from scripts.stockage import init_db
+# Charger les variables d'environnement (notamment DATABASE_URL)
+load_dotenv()
 
 # --- Configuration ---
+DATABASE_URL = os.environ.get('DATABASE_URL')
 TARGET_URL = "https://news.bitcoin.com/"
-DB_PATH = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "data", "bitcoin.db")
 
 def extract_news_with_browser():
     """
-    Pilote un vrai navigateur et utilise les sélecteurs CSS corrects pour extraire les données.
+    Pilote un navigateur Chrome pour scraper les données d'un site dynamique.
     """
     print(f"🚀 Démarrage du navigateur pour scraper : {TARGET_URL}...")
     articles = []
     
     options = uc.ChromeOptions()
+    # Options nécessaires pour fonctionner dans un environnement Docker/headless
     options.add_argument('--headless')
     options.add_argument('--no-sandbox')
     options.add_argument('--disable-dev-shm-usage')
-    # options.add_argument('--headless') # À activer pour ne plus voir le navigateur
-    driver = uc.Chrome(options=options)
     
+    driver = None # Initialiser driver à None
     try:
+        driver = uc.Chrome(options=options)
         driver.get(TARGET_URL)
-        print("⏳ Attente de 5 secondes pour le chargement du contenu par JavaScript...")
-        time.sleep(5)
+        print("⏳ Attente de 10 secondes pour le chargement du contenu par JavaScript...")
+        time.sleep(10)
 
         print("✅ Contenu chargé. Récupération du code HTML final...")
         html_content = driver.page_source
         soup = BeautifulSoup(html_content, 'html.parser')
 
-        # --- LE SÉLECTEUR FINAL ET CORRECT ---
-        # D'après debug_page.html, chaque article est dans une div avec la classe "sc-dDSDPK".
-        article_containers = soup.select("div.sc-dDSDPK")
+        article_containers = soup.select("div.article-card")
 
         if not article_containers:
-            print("❌ ERREUR : Aucun article trouvé avec le sélecteur 'div.sc-dDSDPK'.")
+            print("❌ ERREUR : Aucun article trouvé avec le sélecteur 'div.article-card'.")
             return []
             
         print(f"📰 {len(article_containers)} articles potentiels détectés.")
 
         for container in article_containers:
-            # À l'intérieur de chaque conteneur, le titre est dans un <h6>
-            title_tag = container.select_one("h6")
-            # Le lien est sur la balise <a> parente
+            title_tag = container.select_one("h5.article-card__title")
             link_tag = container.find('a', href=True)
 
             if title_tag and link_tag:
                 title = title_tag.get_text(strip=True)
-                # Le lien peut être relatif, on le reconstruit
                 link = link_tag.get('href')
                 if not link.startswith('http'):
                     link = f"https://news.bitcoin.com{link}"
@@ -68,41 +59,45 @@ def extract_news_with_browser():
                 articles.append({
                     'title': title,
                     'link': link,
-                    'content': "Contenu non récupéré." # La description n'est pas sur la page principale
+                    'content': "Contenu non récupéré."
                 })
         
-        # On ne garde que les articles qui ont un titre (pour filtrer les conteneurs vides)
-        articles = [art for art in articles if art.get('title')]
-        return articles
+        return [art for art in articles if art.get('title')]
 
     except Exception as e:
         print(f"❌ Une erreur est survenue pendant l'automatisation du navigateur : {e}")
         return []
     finally:
-        print("🚪 Fermeture du navigateur.")
-        driver.quit()
+        if driver:
+            print("🚪 Fermeture du navigateur.")
+            driver.quit()
 
 def save_news_to_db(articles):
-    """Enregistre les articles dans la base de données."""
-    if not articles: return
-    conn = sqlite3.connect(DB_PATH)
-    cursor = conn.cursor()
-    inserted_count = 0
-    for article in articles:
-        try:
-            cursor.execute("INSERT INTO bitcoin_news (title, link, content) VALUES (?, ?, ?)",
-                           (article['title'], article['link'], article['content']))
-            inserted_count += 1
-        except sqlite3.IntegrityError:
-            pass
-    conn.commit()
-    conn.close()
-    if inserted_count > 0: print(f"💾 {inserted_count} nouveaux articles enregistrés.")
-    else: print("✨ Aucune nouvelle actualité à ajouter.")
+    """Enregistre les articles dans la base de données PostgreSQL."""
+    if not articles:
+        print("Aucun article à enregistrer.")
+        return
+        
+    if not DATABASE_URL:
+        print("Erreur: La variable d'environnement DATABASE_URL n'est pas configurée.")
+        return
 
-def main():
-    """Fonction principale."""
-    init_db(db_path=DB_PATH)
+    to_insert = [(art['title'], art['link'], art['content']) for art in articles]
+    
+    try:
+        with psycopg2.connect(DATABASE_URL) as conn:
+            with conn.cursor() as cursor:
+                # Utilise ON CONFLICT pour ignorer les doublons de manière efficace
+                extras.execute_values(
+                    cursor,
+                    "INSERT INTO bitcoin_news (title, link, content) VALUES %s ON CONFLICT (title) DO NOTHING",
+                    to_insert
+                )
+        print(f"💾 {cursor.rowcount} nouvelles actualités insérées.")
+    except Exception as e:
+        print(f"❌ Erreur de base de données (News): {e}")
+
+if __name__ == "__main__":
     articles = extract_news_with_browser()
     if articles:
         print(f"\n👍 {len(articles)} articles ont été extraits avec succès.")
@@ -110,6 +105,3 @@ def main():
     else:
         print("⚠️ L'extraction n'a retourné aucun article.")
     print("\n✅ Processus de scraping terminé.")
-
-if __name__ == "__main__":
-    main()
