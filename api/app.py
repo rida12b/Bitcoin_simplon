@@ -3,9 +3,10 @@ import sqlite3
 import os
 import sys
 from fastapi import FastAPI, HTTPException
+import psycopg2 
 
-DB_PATH = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "data", "bitcoin.db")
-print(f"CHEMIN DB (API): {os.path.abspath(DB_PATH)}") # <--- 
+# Récupère l'URL de la base de données depuis les variables d'environnement
+DATABASE_URL = os.environ.get('DATABASE_URL')
 
 # --- Configuration du Path (acceptable pour ce projet, mais à revoir pour un projet plus grand) ---
 # Ajoute le dossier parent au path pour trouver le module 'scripts'
@@ -38,7 +39,7 @@ def get_latest_price():
     """
     logging.info("Requête reçue pour le dernier prix.")
     try:
-        with sqlite3.connect(DB_PATH) as conn:
+        with psycopg2.connect(DATABASE_URL) as conn:
             cursor = conn.cursor()
             cursor.execute("SELECT timestamp, open, high, low, close, volume FROM bitcoin_prices ORDER BY timestamp DESC LIMIT 1")
             row = cursor.fetchone()
@@ -63,7 +64,7 @@ def get_price_history(limit: int = 24):
     """
     logging.info(f"Requête reçue pour l'historique des prix (limite={limit}).")
     try:
-        with sqlite3.connect(DB_PATH) as conn:
+        with psycopg2.connect(DATABASE_URL) as conn:
             cursor = conn.cursor()
             cursor.execute("SELECT timestamp, open, high, low, close, volume FROM bitcoin_prices ORDER BY timestamp DESC LIMIT ?", (limit,))
             rows = cursor.fetchall()
@@ -87,7 +88,7 @@ def get_latest_news(limit: int = 5):
     """
     logging.info(f"Requête reçue pour les dernières nouvelles (limite={limit}).")
     try:
-        with sqlite3.connect(DB_PATH) as conn:
+        with psycopg2.connect(DATABASE_URL) as conn:
             cursor = conn.cursor()
             cursor.execute("SELECT title, link, content, timestamp FROM bitcoin_news ORDER BY timestamp DESC LIMIT ?", (limit,))
             rows = cursor.fetchall()
@@ -112,7 +113,7 @@ def price_analysis(limit: int = 24):
     """
     logging.info(f"Requête reçue pour l'analyse de prix (limite={limit}).")
     try:
-        with sqlite3.connect(DB_PATH) as conn:
+        with psycopg2.connect(DATABASE_URL) as conn:
             cursor = conn.cursor()
             cursor.execute("SELECT timestamp, close, volume FROM bitcoin_prices ORDER BY timestamp DESC LIMIT ?", (limit,))
             rows = cursor.fetchall()
