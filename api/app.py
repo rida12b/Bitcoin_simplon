@@ -1,7 +1,7 @@
 import logging
 import os
 import sys
-import sqlite3 # <--- AJOUTÉ pour la vérification de type
+import sqlite3
 from fastapi import FastAPI, HTTPException, Depends
 import psycopg2
 import psycopg2.extras
@@ -22,21 +22,11 @@ DATABASE_URL = os.environ.get('DATABASE_URL')
 def get_db_connection():
     if not DATABASE_URL:
         raise HTTPException(status_code=500, detail="La variable d'environnement DATABASE_URL n'est pas configurée.")
-    
     conn = psycopg2.connect(DATABASE_URL)
     try:
         yield conn
     finally:
         conn.close()
-
-# --- Fonctions Helper ---
-def get_cursor(conn):
-    """Crée un curseur adapté au type de connexion (SQLite pour les tests, Psycopg2 pour la prod)."""
-    if isinstance(conn, sqlite3.Connection):
-        conn.row_factory = sqlite3.Row
-        return conn.cursor()
-    else:
-        return conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
 
 # --- Endpoints de l'API ---
 
@@ -44,7 +34,14 @@ def get_cursor(conn):
 def get_latest_price(conn = Depends(get_db_connection)):
     logging.info("Requête reçue pour le dernier prix.")
     try:
-        with get_cursor(conn) as cursor:
+        # La gestion du curseur se fait à l'intérieur du 'with conn'
+        with conn:
+            if isinstance(conn, sqlite3.Connection):
+                conn.row_factory = sqlite3.Row
+                cursor = conn.cursor()
+            else: # PostgreSQL
+                cursor = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
+            
             cursor.execute("SELECT timestamp, open, high, low, close, volume FROM bitcoin_prices ORDER BY timestamp DESC LIMIT 1")
             row = cursor.fetchone()
 
@@ -61,9 +58,15 @@ def get_latest_price(conn = Depends(get_db_connection)):
 def get_price_history(limit: int = 24, conn = Depends(get_db_connection)):
     logging.info(f"Requête reçue pour l'historique des prix (limite={limit}).")
     try:
-        with get_cursor(conn) as cursor:
-            # La syntaxe des placeholders change entre SQLite (?) et PostgreSQL (%s)
-            query = "SELECT timestamp, open, high, low, close, volume FROM bitcoin_prices ORDER BY timestamp DESC LIMIT " + ("?" if isinstance(conn, sqlite3.Connection) else "%s")
+        with conn:
+            if isinstance(conn, sqlite3.Connection):
+                conn.row_factory = sqlite3.Row
+                cursor = conn.cursor()
+                query = "SELECT timestamp, open, high, low, close, volume FROM bitcoin_prices ORDER BY timestamp DESC LIMIT ?"
+            else: # PostgreSQL
+                cursor = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
+                query = "SELECT timestamp, open, high, low, close, volume FROM bitcoin_prices ORDER BY timestamp DESC LIMIT %s"
+            
             cursor.execute(query, (limit,))
             rows = cursor.fetchall()
         
@@ -77,8 +80,15 @@ def get_price_history(limit: int = 24, conn = Depends(get_db_connection)):
 def get_latest_news(limit: int = 5, conn = Depends(get_db_connection)):
     logging.info(f"Requête reçue pour les dernières nouvelles (limite={limit}).")
     try:
-        with get_cursor(conn) as cursor:
-            query = "SELECT title, link, content, timestamp FROM bitcoin_news ORDER BY id DESC LIMIT " + ("?" if isinstance(conn, sqlite3.Connection) else "%s")
+        with conn:
+            if isinstance(conn, sqlite3.Connection):
+                conn.row_factory = sqlite3.Row
+                cursor = conn.cursor()
+                query = "SELECT title, link, content, timestamp FROM bitcoin_news ORDER BY id DESC LIMIT ?"
+            else: # PostgreSQL
+                cursor = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
+                query = "SELECT title, link, content, timestamp FROM bitcoin_news ORDER BY id DESC LIMIT %s"
+            
             cursor.execute(query, (limit,))
             rows = cursor.fetchall()
         
@@ -92,8 +102,15 @@ def get_latest_news(limit: int = 5, conn = Depends(get_db_connection)):
 def price_analysis(limit: int = 24, conn = Depends(get_db_connection)):
     logging.info(f"Requête reçue pour l'analyse de prix (limite={limit}).")
     try:
-        with get_cursor(conn) as cursor:
-            query = "SELECT timestamp, close, volume FROM bitcoin_prices ORDER BY timestamp DESC LIMIT " + ("?" if isinstance(conn, sqlite3.Connection) else "%s")
+        with conn:
+            if isinstance(conn, sqlite3.Connection):
+                conn.row_factory = sqlite3.Row
+                cursor = conn.cursor()
+                query = "SELECT timestamp, close, volume FROM bitcoin_prices ORDER BY timestamp DESC LIMIT ?"
+            else: # PostgreSQL
+                cursor = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
+                query = "SELECT timestamp, close, volume FROM bitcoin_prices ORDER BY timestamp DESC LIMIT %s"
+            
             cursor.execute(query, (limit,))
             rows = cursor.fetchall()
 
