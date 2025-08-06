@@ -27,6 +27,9 @@ def extract_news_with_browser():
     articles = []
     
     options = uc.ChromeOptions()
+    options.add_argument('--headless')
+    options.add_argument('--no-sandbox')
+    options.add_argument('--disable-dev-shm-usage')
     # options.add_argument('--headless') # À activer pour ne plus voir le navigateur
     driver = uc.Chrome(options=options)
     
