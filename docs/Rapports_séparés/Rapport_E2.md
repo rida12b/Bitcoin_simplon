@@ -1,8 +1,11 @@
 # Rapport d'Épreuve E2 : Veille, Sélection et Paramétrage du Service d'Intelligence Artificielle (C6-C8)
 
 **Projet** : Bitcoin Analyzer
+
 **Candidat** : Rida Boualam
+
 **Date** : Juillet 2025
+
 **Certification Visée** : RNCP37827 - Développeur en Intelligence Artificielle
 
 ## Table des Matières
