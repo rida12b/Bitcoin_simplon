@@ -11,6 +11,7 @@ logger = logging.getLogger(__name__)
 # L'adresse de notre API FastAPI.
 API_BASE_URL = os.environ.get('API_BASE_URL', 'http://127.0.0.1:8001')
 
+#modif#
 def news_list(request):
     """
     Cette vue récupère toutes les données de l'API FastAPI
