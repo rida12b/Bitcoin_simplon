@@ -1,0 +1,20 @@
+[0;1;32m●[0m gunicorn_django.service - Gunicorn instance to serve the Bitcoin Analyzer Django Frontend
+     Loaded: loaded (]8;;file://btc-bot-vps/etc/systemd/system/gunicorn_django.service/etc/systemd/system/gunicorn_django.service]8;;; [0;1;32menabled[0m; preset: [0;1;32menabled[0m)
+     Active: [0;1;32mactive (running)[0m since Wed 2025-08-06 17:59:20 UTC; 17s ago
+   Main PID: 1561970 (gunicorn)
+      Tasks: 4 (limit: 1110)
+     Memory: 93.4M (peak: 93.6M)
+        CPU: 979ms
+     CGroup: /system.slice/gunicorn_django.service
+             ├─[0;38;5;245m1561970 /root/Bitcoin_simplon/venv/bin/python3 /root/Bitcoin_simplon/venv/bin/gunicorn --workers 3 --bind 0.0.0.0:8000 dashboard.wsgi:application[0m
+             ├─[0;38;5;245m1561971 /root/Bitcoin_simplon/venv/bin/python3 /root/Bitcoin_simplon/venv/bin/gunicorn --workers 3 --bind 0.0.0.0:8000 dashboard.wsgi:application[0m
+             ├─[0;38;5;245m1561972 /root/Bitcoin_simplon/venv/bin/python3 /root/Bitcoin_simplon/venv/bin/gunicorn --workers 3 --bind 0.0.0.0:8000 dashboard.wsgi:application[0m
+             └─[0;38;5;245m1561973 /root/Bitcoin_simplon/venv/bin/python3 /root/Bitcoin_simplon/venv/bin/gunicorn --workers 3 --bind 0.0.0.0:8000 dashboard.wsgi:application[0m
+
+Aug 06 17:59:20 btc-bot-vps systemd[1]: Started gunicorn_django.service - Gunicorn instance to serve the Bitcoin Analyzer Django Frontend.
+Aug 06 17:59:20 btc-bot-vps gunicorn[1561970]: [2025-08-06 17:59:20 +0000] [1561970] [INFO] Starting gunicorn 23.0.0
+Aug 06 17:59:20 btc-bot-vps gunicorn[1561970]: [2025-08-06 17:59:20 +0000] [1561970] [INFO] Listening at: http://0.0.0.0:8000 (1561970)
+Aug 06 17:59:20 btc-bot-vps gunicorn[1561970]: [2025-08-06 17:59:20 +0000] [1561970] [INFO] Using worker: sync
+Aug 06 17:59:20 btc-bot-vps gunicorn[1561971]: [2025-08-06 17:59:20 +0000] [1561971] [INFO] Booting worker with pid: 1561971
+Aug 06 17:59:21 btc-bot-vps gunicorn[1561972]: [2025-08-06 17:59:21 +0000] [1561972] [INFO] Booting worker with pid: 1561972
+Aug 06 17:59:21 btc-bot-vps gunicorn[1561973]: [2025-08-06 17:59:21 +0000] [1561973] [INFO] Booting worker with pid: 1561973
