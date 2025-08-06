@@ -2,13 +2,14 @@ from django.shortcuts import render
 import requests
 import logging
 from datetime import datetime
+import os
 
 # ## AJOUT ## : Initialisation du logger pour ce module.
 # C'est une bonne pratique de nommer le logger avec __name__.
 logger = logging.getLogger(__name__)
 
 # L'adresse de notre API FastAPI.
-API_BASE_URL = "http://127.0.0.1:8001"
+API_BASE_URL = os.environ.get('API_BASE_URL', 'http://127.0.0.1:8001')
 
 def news_list(request):
     """
