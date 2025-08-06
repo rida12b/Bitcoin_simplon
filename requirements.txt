@@ -24,3 +24,4 @@ dj-database-url
 
 # Pour le serveur de production (standard industriel)
 gunicorn
+undetected-chromedriver
