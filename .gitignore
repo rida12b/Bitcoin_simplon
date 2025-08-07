@@ -42,4 +42,4 @@ logs/
 htmlcov/
 nosetests.xml
 coverage.xml
-repomix-output.xml
+repomix-output.xml*.deb
