@@ -2,7 +2,8 @@ import os
 import requests
 import time
 from dotenv import load_dotenv
-from stockage import init_db, insert_many
+# On importe la nouvelle fonction
+from stockage import init_db, insert_many_prices
 
 load_dotenv()
 
@@ -12,35 +13,37 @@ symbols = "BTCUSDC.A"
 interval = "1hour"
 
 TO_TIMESTAMP = int(time.time())
-FROM_TIMESTAMP = TO_TIMESTAMP - (24 * 60 * 60)
+# On récupère 25 heures pour être sûr d'avoir 24 points complets
+FROM_TIMESTAMP = TO_TIMESTAMP - (25 * 60 * 60)
 
 HEADERS = {
     "api_key" : API_KEY
 }
 
 def get_bitcoin_data():
-        params = {
-            "symbols": symbols,
-            "interval": interval,
-            "from": FROM_TIMESTAMP,
-            "to": TO_TIMESTAMP
-        }
-        
+    params = {
+        "symbols": symbols,
+        "interval": interval,
+        "from": FROM_TIMESTAMP,
+        "to": TO_TIMESTAMP
+    }
+    
+    try:
         response = requests.get(API_URL, headers=HEADERS, params=params)
-        if response.status_code == 200:
-            print("Connexion réussie !")
-            data = response.json()
-            print(data)
-            return data
-        else:
-            print(f"Erreur {response.status_code} : {response.text}")
-            return None
+        response.raise_for_status() # Lève une erreur pour les statuts 4xx/5xx
+        print("Connexion réussie !")
+        return response.json()
+    except requests.exceptions.RequestException as e:
+        print(f"Erreur de connexion à l'API Coinalyze: {e}")
+        return None
 
 if __name__ == "__main__":
+    # Pas besoin d'appeler init_db() ici si les services le font déjà,
+    # mais c'est une sécurité.
     init_db()
     data = get_bitcoin_data()
-    if data:
-        # On suppose qu'il n'y a qu'un seul symbole, donc data[0]
+    
+    if data and data[0].get("history"):
         history = data[0]["history"]
         data_list = [
             {
@@ -53,7 +56,7 @@ if __name__ == "__main__":
             }
             for entry in history
         ]
-        insert_many(data_list)
-        print(f"{len(data_list)} lignes insérées dans la base.")
+        # On appelle la nouvelle fonction qui sait parler à PostgreSQL
+        insert_many_prices(data_list)
     else:
-        print("Aucune donnée à insérer.")
+        print("Aucune donnée de prix reçue de l'API ou format inattendu.")
