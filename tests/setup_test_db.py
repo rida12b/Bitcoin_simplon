@@ -3,27 +3,49 @@ import sqlite3
 import os
 import sys
 
-# Permet d'importer depuis le dossier parent
-sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
-from scripts.stockage import init_db
+# Ce script est maintenant 100% autonome et ne dépend plus de 'scripts/stockage.py'
+# ce qui est une meilleure pratique pour l'isolation des tests.
 
 # Définit le chemin de notre BDD de test
 TEST_DB_PATH = os.path.join(os.path.dirname(__file__), 'test_database.db')
 
 def setup():
-    print(f"Création de la base de données de test à : {TEST_DB_PATH}")
+    """
+    Crée et peuple une base de données de test entièrement isolée.
+    """
+    print(f"Préparation de la base de données de test à : {TEST_DB_PATH}")
 
     # Si le fichier existe, on le supprime pour repartir de zéro
     if os.path.exists(TEST_DB_PATH):
         os.remove(TEST_DB_PATH)
 
-    # 1. Crée les tables dans notre BDD de test
-    init_db(db_path=TEST_DB_PATH)
-
-    # 2. Se connecte et insère des données
+    # 1. Se connecter et CRÉER LES TABLES DIRECTEMENT ICI
     conn = sqlite3.connect(TEST_DB_PATH)
     cursor = conn.cursor()
 
+    # Création de la table des prix (copiée depuis stockage.py)
+    print("Création de la table 'bitcoin_prices'...")
+    cursor.execute('''
+    CREATE TABLE bitcoin_prices (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        timestamp INTEGER UNIQUE,
+        open REAL, high REAL, low REAL, close REAL, volume REAL
+    );''')
+
+    # Création de la table des actualités (copiée depuis stockage.py)
+    print("Création de la table 'bitcoin_news'...")
+    cursor.execute("""
+    CREATE TABLE bitcoin_news (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        title TEXT NOT NULL UNIQUE,
+        link TEXT NOT NULL,
+        content TEXT,
+        timestamp DATETIME
+    );""")
+    print("Tables créées avec succès.")
+
+    # 2. Insérer les données de test
+    print("Insertion des données de test...")
     # Insère une fausse nouvelle
     cursor.execute("INSERT INTO bitcoin_news (title, link, content) VALUES (?, ?, ?)", 
                    ("Titre de test", "http://test.com", "Contenu de test"))
