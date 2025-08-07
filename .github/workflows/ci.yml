@@ -53,5 +53,6 @@ jobs:
         username: ${{ secrets.VPS_USERNAME }}
         key: ${{ secrets.VPS_SSH_PRIVATE_KEY }}
         script: |
-          cd /root/Bitcoin_simplon
-          ./deploy.sh
+        cd /root/Bitcoin_simplon
+        chmod +x deploy.sh
+        ./deploy.sh
