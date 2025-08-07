@@ -1,15 +1,21 @@
 #!/bin/bash
 
-echo "Initialisation de la base de données (si nécessaire)..."
-python manage.py migrate
+# Définit le chemin vers l'exécutable Python du venv
+PYTHON_EXEC="/root/Bitcoin_simplon/venv/bin/python"
+
+# Définit le chemin vers le répertoire du projet
+PROJECT_DIR="/root/Bitcoin_simplon"
+
+echo "--- Tâche Cron démarrée le $(date) ---"
 
 echo "Lancement du script d'extraction des prix depuis l'API..."
-python scripts/extraction_api.py
+$PYTHON_EXEC "$PROJECT_DIR/scripts/extraction_api.py"
 
 echo "Lancement du script d'extraction des actualités depuis le FLUX RSS..."
-python scripts/extraction_news.py
+$PYTHON_EXEC "$PROJECT_DIR/scripts/extraction_news.py"
 
 echo "Lancement du script d'extraction depuis la source SQL..."
-python scripts/extraction_sql.py
+$PYTHON_EXEC "$PROJECT_DIR/scripts/extraction_sql.py"
 
 echo "Tâches de collecte terminées."
+echo "--- Tâche Cron terminée le $(date) ---"
